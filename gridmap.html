@@ -48,6 +48,7 @@
             display: flex;
             width: 100%;
             height: 100%;
+            padding: 0;
         }
 
         .panel_bar {
@@ -63,22 +64,34 @@
             height: 100%;
             width: 100%;
             background-color: #e0e0e0;
+            padding-right: 20px;
         }
         
         #map {
             top: 0;
             bottom: 0;
             height: 100%;
-            width: 75%;
+            width: 77%;
         }
         #myTable {
-            width: 100%;
-            right: 0px;
+            width: 270px;
+            right: 20px;
+            width: 21%;
+        }
+        td {
+            max-width: 150px;
+            text-align: right;
+        }
+        th {
+            max-width: 150px;
+            text-align: right;
         }
     </style>
 
 
     <script type="text/javascript">
+
+        var vehicleIndex = 0;
 
         function getUrlParameter(name) {
             name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
@@ -88,66 +101,66 @@
         };
 
         function sortTable(n) {
-        var table,
-            rows,
-            switching,
-            i,
-            x,
-            y,
-            shouldSwitch,
-            dir,
-            switchcount = 0;
-        table = document.getElementById("myTable");
-        switching = true;
-        //Set the sorting direction to ascending:
-        dir = "asc";
-        /*Make a loop that will continue until
-        no switching has been done:*/
-        while (switching) {
-            //start by saying: no switching is done:
-            switching = false;
-            rows = table.getElementsByTagName("TR");
-            /*Loop through all table rows (except the
-            first, which contains table headers):*/
-            for (i = 1; i < rows.length - 1; i++) { //Change i=0 if you have the header th a separate table.
-            //start by saying there should be no switching:
-            shouldSwitch = false;
-            /*Get the two elements you want to compare,
-            one from current row and one from the next:*/
-            x = rows[i].getElementsByTagName("TD")[n];
-            y = rows[i + 1].getElementsByTagName("TD")[n];
-            /*check if the two rows should switch place,
-            based on the direction, asc or desc:*/
-            if (dir == "asc") {
-                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                //if so, mark as a switch and break the loop:
-                shouldSwitch = true;
-                break;
-                }
-            } else if (dir == "desc") {
-                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-                //if so, mark as a switch and break the loop:
-                shouldSwitch = true;
-                break;
-                }
-            }
-            }
-            if (shouldSwitch) {
-            /*If a switch has been marked, make the switch
-            and mark that a switch has been done:*/
-            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            var table,
+                rows,
+                switching,
+                i,
+                x,
+                y,
+                shouldSwitch,
+                dir,
+                switchcount = 0;
+            table = document.getElementById("myTable");
             switching = true;
-            //Each time a switch is done, increase this count by 1:
-            switchcount++;
-            } else {
-            /*If no switching has been done AND the direction is "asc",
-            set the direction to "desc" and run the while loop again.*/
-            if (switchcount == 0 && dir == "asc") {
-                dir = "desc";
+            //Set the sorting direction to ascending:
+            dir = "asc";
+            /*Make a loop that will continue until
+            no switching has been done:*/
+            while (switching) {
+                //start by saying: no switching is done:
+                switching = false;
+                rows = table.getElementsByTagName("TR");
+                /*Loop through all table rows (except the
+                first, which contains table headers):*/
+                for (i = 1; i < rows.length - 1; i++) { //Change i=0 if you have the header th a separate table.
+                //start by saying there should be no switching:
+                shouldSwitch = false;
+                /*Get the two elements you want to compare,
+                one from current row and one from the next:*/
+                x = rows[i].getElementsByTagName("TD")[n];
+                y = rows[i + 1].getElementsByTagName("TD")[n];
+                /*check if the two rows should switch place,
+                based on the direction, asc or desc:*/
+                if (dir == "asc") {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                    //if so, mark as a switch and break the loop:
+                    shouldSwitch = true;
+                    break;
+                    }
+                } else if (dir == "desc") {
+                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                    //if so, mark as a switch and break the loop:
+                    shouldSwitch = true;
+                    break;
+                    }
+                }
+                }
+                if (shouldSwitch) {
+                /*If a switch has been marked, make the switch
+                and mark that a switch has been done:*/
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
                 switching = true;
+                //Each time a switch is done, increase this count by 1:
+                switchcount++;
+                } else {
+                /*If no switching has been done AND the direction is "asc",
+                set the direction to "desc" and run the while loop again.*/
+                if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
+                    switching = true;
+                }
+                }
             }
-            }
-        }
         }
 
         function isMobile() {
@@ -162,13 +175,18 @@
             );
         }
 
+        function addVehicle2table(deviceId, vehicleLicense, posDateIso){
+            $('#element'+vehicleIndex).html('<td align="right">' + deviceId + '</td><td align="right">' + vehicleLicense + '</td><td align="right">'+ posDateIso + '</td>');
+            $('#myTable').append('<tr id="element'+(vehicleIndex+1)+'"></tr>');
+            vehicleIndex++;
+        }
+
+
     </script>
 
     <script>
         $(document).ready(function () {
-            $.ajaxSetup({ cache: false });
-
-            
+            $.ajaxSetup({ cache: false });            
 
             if (isMobile()) {
                 document.getElementById('attr-logo').style.display = 'none';
@@ -179,10 +197,61 @@
                 $("#attr-logo").css({ height: (width_window * 0.12279) * 0.46 + 'px' });
 
             }
+            //var width = window.innerWidth; // ancho
+            //$('#map').css({ "width" : width -300 });
 
-            addVehicleAndZoom(41,-3);
+            //addVehicle2Map(41,-3);
+            //addVehicle2table(1,'1615FDW', '2019-01-18T12:50:30');
 
-            $('#tooltipHeader').css('background-color', '#F7BE81');
+            /*$.ajaxSetup({headers : {'x-access' : 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NDkwNjA1NzA4OTYsImlzcyI6Imt5cm9zdmlldyIsInN1YiI6ImNydWVkYSJ9.O3uS46WCWScciwPOOXeX09ItTe4-6pHPNynkoL0Ff08'}});
+            //$.getJSON( 'https://correos-soes.kyroslbs.com/api/tracking1/all', function( data ) {
+            $.getJSON( 'https://api-demos.kyroslbs.com/api/tree/crueda', function( data ) {
+            console.log('11**');
+            //$.getJSON( 'http://192.168.28.244:8000/api/tree/crueda', function( data ) {
+                console.log(data);
+                $.each( data, function( key, val ) {
+
+                });
+            });*/
+
+            /*$.ajax({
+                url: "https://correos-soes.kyroslbs.com/api/tracking1/all",
+                headers: {
+                    'Authorization':'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjb3JyZW9zX3NvZXMiLCJzdWIiOiJhcGlkZXVzdG8iLCJpYXQiOjE1NDg0MTc0OTEsImV4cCI6MTU0OTAyMjI5MSwiZGV2aWNlX2lkIjpbMzksNDEsNDMsNDUsNDcsNDksNTEsNTMsNTUsNjMsNjUsNjcsNjksNzEsNzMsNzUsNzcsNzksODEsODcsODksOTEsOTMsOTUsOTcsOTksMTAxLDEwMywxMDcsMTA5LDExNywxMTksMTA1LDUsOSwxMSwxMywxNSwxNywxOSwyMSwyMywyNSwyOSwzMSwzMywzNSw1Nyw1OSwxMjMsMTI1LDgzLDg1LDEyNywxMjEsMTExLDYxLDExNSwxNTUsMTQ5LDE1MSwyNywzNyw3LDExM119.8nlgHlsaI44SlPB0rpO5f-y8uFR9g3jQtpU8oGcQ0LI',
+                    'Content-Type':'application/json'
+                },
+                type: "GET",
+                crossDomain: true,
+                
+                data: JSON.stringify({}),
+                dataType: "json",
+                success: function (response) {
+                    var resp = JSON.parse(response)
+                    console.log(resp.status);
+                },
+                error: function (xhr, status) {
+                    console.log("error");
+                }
+            });*/
+
+            $.ajaxSetup({headers : {'Access-Control-Allow-Headers': '*', 'Authorization' : 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjb3JyZW9zX3NvZXMiLCJzdWIiOiJhcGlkZXVzdG8iLCJpYXQiOjE1NDg0MTc0OTEsImV4cCI6MTU0OTAyMjI5MSwiZGV2aWNlX2lkIjpbMzksNDEsNDMsNDUsNDcsNDksNTEsNTMsNTUsNjMsNjUsNjcsNjksNzEsNzMsNzUsNzcsNzksODEsODcsODksOTEsOTMsOTUsOTcsOTksMTAxLDEwMywxMDcsMTA5LDExNywxMTksMTA1LDUsOSwxMSwxMywxNSwxNywxOSwyMSwyMywyNSwyOSwzMSwzMywzNSw1Nyw1OSwxMjMsMTI1LDgzLDg1LDEyNywxMjEsMTExLDYxLDExNSwxNTUsMTQ5LDE1MSwyNywzNyw3LDExM119.8nlgHlsaI44SlPB0rpO5f-y8uFR9g3jQtpU8oGcQ0LI'}});
+            //$.getJSON( 'https://correos-soes.kyroslbs.com/api/tracking1/all', function( data ) {
+            //$.getJSON( 'http://127.0.0.1:8000/api/tracking1/all', function( data ) {
+            //console.log("!!!!");
+            //$.getJSON( 'http://192.168.25.25:8000/api/tracking1/all', function( data ) {
+            //$.getJSON( 'http://192.168.25.25:8000/api/version', function( data ) {
+            //$.getJSON( 'http://192.168.28.244:8000/version', function( data ) {
+            $.getJSON( 'http://localhost:3000/response', function( data ) {
+                console.log("OK !!!!");
+                //console.log(data);
+                if (data.status == 0) {
+                    data.data.forEach(function(element) {
+                        addVehicle2table(element.device_id,element.vehicle_license,element.pos_date_iso);
+                        addVehicle2Map(element.location.coordinates[1],element.location.coordinates[0]);
+                    });
+                }
+            });
+
         });  //ready
 
     </script>
@@ -191,58 +260,17 @@
 
 <body>
 
-    <!--div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span12">
-                <div id="map" class="map">
-                    <div id="attr-logo"></div>
-                    <div id="info"></div>
-                </div>
-            </div>
-        </div>
-    </div-->
     <div class="container">
-        <div class="panel_bar"></div>
+        <!--div class="panel_bar"></div-->
         <div class="panel_table">
-            <table border="1" id="myTable">
+            <table border="0" id="myTable" align="right">
                 <tr>
-                 <!--When a header is clicked, run the sortTable function, with a parameter, 0 for sorting by names, 1 for sorting by country:-->  
-                  <th onclick="sortTable(0)">Name</th>
-                  <th onclick="sortTable(1)">Country</th>
+                  <th onclick="sortTable(0)">Id</th>
+                  <th onclick="sortTable(1)">Matrícula</th>
+                  <th onclick="sortTable(2)">Última posición</th>
                 </tr>
-                <tr>
-                  <td>Berglunds snabbkop</td>
-                  <td>Sweden</td>
-                </tr>
-                <tr>
-                  <td>North/South</td>
-                  <td>UK</td>
-                </tr>
-                <tr>
-                  <td>Alfreds Futterkiste</td>
-                  <td>Germany</td>
-                </tr>
-                <tr>
-                  <td>Koniglich Essen</td>
-                  <td>Germany</td>
-                </tr>
-                <tr>
-                  <td>Magazzini Alimentari Riuniti</td>
-                  <td>Italy</td>
-                </tr>
-                <tr>
-                  <td>Paris specialites</td>
-                  <td>France</td>
-                </tr>
-                <tr>
-                  <td>Island Trading</td>
-                  <td>UK</td>
-                </tr>
-                <tr>
-                  <td>Laughing Bacchus Winecellars</td>
-                  <td>Canada</td>
-                </tr>
-              </table>
+                <tr id="element0"></tr>
+            </table>
         </div>
 
         <div id="map" class="map">
@@ -252,7 +280,7 @@
 
     <script>
 
-        function addVehicleAndZoom(lat, lon) {
+        function addVehicle2Map(lat, lon) {
             var geo_point = new ol.geom.Point(ol.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857'));
 
             var iconFeature = new ol.Feature({
@@ -272,12 +300,12 @@
             })];
             iconFeature.setStyle(iconStyle);
 
-            vehiclesRealTimeSource.clear();
+            //vehiclesRealTimeSource.clear();
             vehiclesRealTimeSource.addFeature(iconFeature); 
 
-            map.getView().setCenter(ol.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857'));
-            map.getView().setZoom(14);
-
+            //map.getView().setCenter(ol.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857'));
+            //map.getView().setZoom(14);
+            map.getView().fit(vehiclesRealTimeSource.getExtent(), map.getSize());
         }
 
 
